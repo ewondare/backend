@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!--required meta tags-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Bootstrap CSS-->
+    <!--link href-->
+    <title>jobPortal</title>
+</head>
+
+<body>
+
+    <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+        <div class="row align-items-center f-lf-5 py-5">
+            <div class="col-lg-7 text-center text-lg-start">
+                <h1 class="display-4 fw-bold lh-1 mb-3">Welcome to our jobportal</h1>
+                <p class="col-lg-10 fs-4">
+                    Find the job you are destined for!
+                </p>
+            </div>
+            <div class="col-md-10 mx-auto col-lg-5">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-message.tags" role="alert">
+                    <b>{{message}}</b>
+
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                {% block content  %}
+                {% endblock content %}
+
+            </div>
+        </div>
+    </div>
+</body>
