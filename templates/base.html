@@ -20,13 +20,25 @@
             <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="'navbarSupportedContent">
+                {% if request.user.is_authenticated %}
+                {% if request.user.is_applicant %} 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="'page" href="#">Home</a>
                     </li>
+                    {% if request.user.has_resume %}
                     <li class="nav-item">
-                        <a class="nav-link "  href="#">Link</a>
+                        <a class="nav-link "  href="#">Update Resume</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link "  href="#">Apply to Jobs</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link "  href="#">Create Resume</a>
+                    </li>
+
+                    {% endif %}
                     <li class="nav-item droprown">
                         <a class="nav-link dropdown-toggle"  href="#" id="navbarDropdown" role="button"
                         data-bs-toggle="droprown" aria-expanded="false">
@@ -45,7 +57,45 @@
                         <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
                     </li>
                 </ul>
-                <a href="a" class="btn btn-primary">Logout</a>
+                {% elif request.user.is_recruiter %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="'page" href="#">Home</a>
+                    </li>
+                    {% if request.user.has_company %}
+                    <li class="nav-item">
+                        <a class="nav-link "  href="#">Create Job Ads</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link "  href="{%  url 'update-company' %}">Update Company</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link "  href="{%  url 'update-company' %}">Create Company</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item droprown">
+                        <a class="nav-link dropdown-toggle"  href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="droprown" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Action1</a></li>
+                        <li><a class="dropdown-item" href="#">Action2</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                    </li>
+                </ul>
+                {% endif %}
+                {% endif %}
+                <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
                 <!--a href="a" class="btn btn-primary">Register</a -->
                 <!--a href="a" class="btn btn-primary">Login</a -->
 
@@ -54,6 +104,14 @@
     </nav>
 
     <div class="container mt-5">
+        {% if messages %} 
+        {% for message in messages %}
+        <div class="alert alert-{{message.tags}}" role="alert">
+            <b>{{message}}</b>
+        </div> 
+
+        {% endfor  %} 
+        {% endif %} 
         {% block content %}
         {% endblock content %}
 
@@ -61,12 +119,5 @@
             
         </section-->
     </div>
-
-
-    <footer class="footer mt-auto py-3 bg-light">
-        <div class="container text-center">
-            <span class="text-muted"></span>
-        </div>
-    </footer>
 </body>
 </html>
