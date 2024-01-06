@@ -5,7 +5,7 @@
 {% if request.user.is_applicant %}
 {% if not request.user.has_resume %}
 <div class="alert alert-danger" role="alert">
-    <b>You are seeing this because you have not created any resume. Create one from <a href="#">here</a></b>
+    <b>You are seeing this because you have not created any resume. Create one from <a href="{% url 'update-resume' %}">here</a></b>
 </div>
 {% endif %}
 <section>

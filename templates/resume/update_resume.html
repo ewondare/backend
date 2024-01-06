@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mx-auto" style="width: 40rem;">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Create A Resume</h5>
+
+                <form method="POST">
+                    {% csrf_token %} 
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">First Name</lable>
+                        {% render_field form.name class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">Last Name</lable>
+                        {% render_field form.lastName class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">Age</lable>
+                        {% render_field form.age class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">gender:1 as in woman,0 as in man</lable>
+                        {% render_field form.gender class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">about</lable>
+                        {% render_field form.about class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">Phone Number</lable>
+                        {% render_field form.phone_number class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">Georgian birthday in Day/Month/Year Format</lable>
+                        {% render_field form.birthday class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">Adress</lable>
+                        {% render_field form.address class="form-control" %} 
+                    </div>
+
+
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}   

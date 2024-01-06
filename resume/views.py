@@ -6,14 +6,32 @@ from .form import UpdateResumeForm
 # Create your views here.
 
 def update_resume(request):
-    resume = Resume.objects.get(user=request.user)
-    if (request.method == 'POST'):
-        form = UpdateResumeForm(request.POST , instance=resume)
-        if form.is_valid():
-            var = form.save(commit=False)
-            user = User.objects.get(pk=request.user.id)
-            user.has_resume = True
-            user.save()
-            var.save()
-            messages.info(request, 'Your')
-            
+    if request.user.is_applicant:
+        resume = Resume.objects.get(user=request.user)
+        if (request.method == 'POST'):
+            form = UpdateResumeForm(request.POST , instance=resume)
+            if form.is_valid():
+                var = form.save(commit=False)
+                user = User.objects.get(id=request.user.id)
+                user.has_resume = True
+                user.save()
+                var.save()
+                messages.info(request, 'Your Rseume hs been updated.')
+                return redirect('dashboard')
+            else:
+                #messages.warning('Something went wrong.')
+                error_message = form.errors.as_text()
+                messages.warning(request, f'Something went wrong: {error_message}')
+                return redirect('dashboard')
+        else:
+            form = UpdateResumeForm(instance=resume)
+            context = {'form':form}
+            return render(request, 'resume/update_resume.html' , context)
+    else:
+        messages.warning(request, 'Permission Denied.')
+        return redirect('dashboard')
+
+def resume_details(request, pk):
+    resume = Resume.objects.get(pk=pk)            
+    context = {'resume':resume}
+    return render(request, 'resume/resume_details.html' , context)

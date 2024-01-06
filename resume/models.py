@@ -10,7 +10,7 @@ class Resume(models.Model):
     age = models.IntegerField( null=True, blank=True)
     gender = models.IntegerField(null=True, blank=True)
     about = models.CharField(max_length=1000 , null=True, blank=True)
-    phone_number = models.BigIntegerField(null=True, blank=True)
+    phone_number = models.CharField(max_length=11,null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=1000, null=True, blank=True)
     # insert cv 
