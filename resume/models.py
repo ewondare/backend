@@ -8,7 +8,7 @@ class Resume(models.Model):
     name = models.CharField(max_length=100 , null=True , blank=True)
     lastName = models.CharField(max_length=100, null=True, blank=True)
     age = models.IntegerField( null=True, blank=True)
-    gender = models.IntegerField(null=True, blank=True)
+    gender = models.BooleanField(null=True, blank=True)
     about = models.CharField(max_length=1000 , null=True, blank=True)
     phone_number = models.CharField(max_length=11,null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)

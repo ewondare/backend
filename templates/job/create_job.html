@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mx-auto" style="width: 40rem;">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Create A Job AD</h5>
+
+                <form method="POST">
+                    {% csrf_token %} 
+                    
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">Job Title</lable>
+                        {% render_field form.title class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">Location</lable>
+                        {% render_field form.location class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">Salary</lable>
+                        {% render_field form.salary class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">Description</lable>
+                        {% render_field form.description|attr:"rows=2" class="form-control" %} 
+                    </div>
+                    <div class="mb-3">
+                        <lable for="'exampleInputEmail1" class="form-label">Is Available</lable>
+                        {% render_field form.is_available class="form-check-input" %} 
+                    </div>
+
+
+
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}   

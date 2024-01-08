@@ -19,9 +19,9 @@ def update_resume(request):
                 messages.info(request, 'Your Rseume hs been updated.')
                 return redirect('dashboard')
             else:
-                #messages.warning('Something went wrong.')
-                error_message = form.errors.as_text()
-                messages.warning(request, f'Something went wrong: {error_message}')
+                messages.warning('Something went wrong.')
+                #error_message = form.errors.as_text()
+                #messages.warning(request, f'Something went wrong: {error_message}')
                 return redirect('dashboard')
         else:
             form = UpdateResumeForm(instance=resume)
