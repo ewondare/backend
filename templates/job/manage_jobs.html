@@ -21,7 +21,7 @@
                     <td>{{job.title}}</td>
                     <td>{{job.location}}</td>
                     <td>{{job.salary}}</td>
-                    <td>{{job.applyjob_set.all.count}}</td>
+                    <td>{{job.applyjob_set.all.count}}<a href="{% url 'all-applicants' job.pk %}"><small>View All</small></a></td>
                     {% if job.is_available %}
                     <td><span class="badge bg-warning">Active</span></td>
                     {% else %}
