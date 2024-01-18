@@ -9,13 +9,13 @@ class Resume(models.Model):
     lastName = models.CharField(max_length=100, null=True, blank=True)
     age = models.IntegerField( null=True, blank=True)
 
-    GENDER = (
-        ('Male'),
-        ('Female'),
+    GENDER_CHOICES = (
+        ('Male', 'Male'),
+        ('Female', 'Female'),
         )
     gender = models.CharField(
             max_length=10,
-            choices=GENDER,
+            choices=GENDER_CHOICES,
             default='Male'
     )
 
@@ -23,17 +23,17 @@ class Resume(models.Model):
     phone_number = models.CharField(max_length=11,null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
 
-    LOCATION = (
-    ('Tehran'),
-    ('Esfahan'),
-    ('Shiraz'),
-    ('Mashhad'),
-    ('Tabriz')
+    LOCATION_CHOICES = (
+        ('Tehran', 'Tehran'),
+        ('Esfahan', 'Esfahan'),
+        ('Shiraz', 'Shiraz'),
+        ('Mashhad', 'Mashhad'),
+        ('Tabriz', 'Tabriz')
     )
     location = models.CharField(
-            max_length=32,
-            choices=LOCATION,
-            default='Tehran'
+        max_length=32,
+        choices=LOCATION_CHOICES,
+        default='Tehran'
     )
 
     skills = models.CharField(max_length=500 , null=True, blank=True)

@@ -8,29 +8,29 @@ class Company(models.Model):
     website = models.CharField(max_length=100 , null=True, blank=True)
     about = models.CharField(max_length=1000 , null=True, blank=True)
     
-    LOCATION = (
-       ('Tehran'),
-       ('Esfahan'),
-       ('Shiraz'),
-       ('Mashhad'),
-       ('Tabriz')
+    LOCATION_CHOICES = (
+        ('Tehran', 'Tehran'),
+        ('Esfahan', 'Esfahan'),
+        ('Shiraz', 'Shiraz'),
+        ('Mashhad', 'Mashhad'),
+        ('Tabriz', 'Tabriz')
     )
     location = models.CharField(
         max_length=32,
-        choices=LOCATION,
+        choices=LOCATION_CHOICES,
         default='Tehran'
     )
 
-    SIZE = (
-       ('-10'),
-       ('10-50'),
-       ('50-200'),
-       ('200-500'),
-       ('500+')
+    SIZE_CHOICES = (
+        ('-10', 'Less than 10'),
+        ('10-50', '10-50 employees'),
+        ('50-200', '50-200 employees'),
+        ('200-500', '200-500 employees'),
+        ('500+', 'More than 500')
     )
     size = models.CharField(
         max_length=32,
-        choices=SIZE,
+        choices=SIZE_CHOICES,
         default='-10'
     )
 

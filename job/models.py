@@ -13,19 +13,6 @@ class Job(models.Model):
         qualifications = models.CharField(max_length=1000)
         responsibilities = models.CharField(max_length=1000)
 
-        LOCATION = (
-        ('Tehran'),
-        ('Esfahan'),
-        ('Shiraz'),
-        ('Mashhad'),
-        ('Tabriz')
-        )
-        location = models.CharField(
-                max_length=32,
-                choices=LOCATION,
-                default='Tehran'
-        )
-
 def __str__(self):
         return self.title
         
