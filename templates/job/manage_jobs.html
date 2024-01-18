@@ -27,7 +27,7 @@
                     {% else %}
                     <td><span class="badge bg-warning">Not Active</span></td>
                     {% endif %}
-                    <td><a href='#'><small>Update Job</small></a></td>
+                    <td><a href="{% url 'update-job' job.pk %}"><small>Update Job</small></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

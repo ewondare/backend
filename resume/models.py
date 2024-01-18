@@ -14,5 +14,6 @@ class Resume(models.Model):
     birthday = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=1000, null=True, blank=True)
     # insert cv 
+    upload_resume = models.FileField(upload_to='resume')
     def __str__(self):
         return f'{self.name} {self.lastName}'

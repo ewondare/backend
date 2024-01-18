@@ -21,7 +21,7 @@
                     <td>{{applicant.user.resume.lastName}}</td>
                     <td>{{applicant.user.resume.age}}</td>
                     <td>{{applicant.timestamp}}</td>
-                    <td><a href="#"><small>Download Resume</small></a></td>
+                    <td><a target="_blank" href="{{applicant.user.resume.upload_resume.url}}"><small>Download Resume</small></a></td>
                 </tr>
                 {% endfor %}    
 
