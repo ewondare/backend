@@ -9,10 +9,13 @@
             <p class="col-md-8 fs-5 mt-3">
                 {{job.location}}| {{job.salary|intcomma}}
             </p>
-            <button class="btn btn-primary btn-lg" type="button">Apply Now</button>
+            {% if has_applied == False %}
+            <a class="btn btn-primary btn-lg" href="{% url 'apply-to-job' job.pk %}">Apply Now</a>
+            {% else %}
+            <p><span class="text-danger">You Have Already Applied For This Job!</span></p>
+            {% endif %}
         </div>
     </div>
-
 </section>
 
 
