@@ -2,7 +2,6 @@ from django.db import models
 from users.models import User
 from company.models import Company
 from resume.models import Resume
-# Create your models here.
 
 class Industry(models.Model):
         name = models.CharField(max_length=100)
@@ -24,7 +23,6 @@ class Job(models.Model):
         user = models.ForeignKey(User, on_delete=models.CASCADE)
         company = models.ForeignKey(Company, on_delete=models.CASCADE)
         title = models.CharField(max_length=100)
-        location = models.CharField(max_length=1000)
         salary = models.PositiveBigIntegerField()
         description = models.TextField()
         is_available = models.BooleanField(default=True)
@@ -32,11 +30,11 @@ class Job(models.Model):
         industry = models.ForeignKey(Industry, on_delete=models.DO_NOTHING, null=True , blank=True)
         job_type = models.CharField(max_length=20, choices=job_type_choices, null=True , blank=True)
         job_experience_needed = models.CharField(max_length=20, choices=job_experience_needed_choices, null=True , blank=True)
+        qualifications = models.CharField(max_length=1000)
+        responsibilities = models.CharField(max_length=1000)
 
-        
-
-def __str__(self):
-        return self.title
+        def __str__(self):
+                return self.title
 
 
 
