@@ -1,6 +1,6 @@
 
 {% extends 'users/base.html' %}
-{% block content%}
+{% block content %}
 <form class="p-4 p-md-5 border rounded-3 bg-light" method="POST">
     {% csrf_token %}
     <div class="form-floating mb-3">
@@ -14,8 +14,9 @@
 
     <button class="w-100 btn btn-lg btn-primary" type="submit">Sign In</button>
     <hr class="my-4">
-    <small class="text-muted">Don't have an account? <a href="{% url 'register-applicant' %}">Sign Up</a></small>
+    <small class="text-muted">Don't have an account? (Applicant) <a href="{% url 'register-applicant' %}">Sign Up</a></small> <br>
+    <small class="text-muted">Don't have an account? (Recruiter) <a href="{% url 'register-recruiter' %}">Sign Up</a></small>
     
     
 </form>
-{% endblock content%}
+{% endblock content %}
