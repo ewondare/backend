@@ -1,8 +1,6 @@
 from django.shortcuts import render
 from job.models import Job, ApplyJob
 from .filter import Jobfilter
-# Create your views here.
-
 
 def home(request):
     filter = Jobfilter(request.GET , queryset=Job.objects.filter(is_available=True).order_by('-timestamp') )

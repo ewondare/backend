@@ -23,8 +23,6 @@ def register_applicant(request):
             error_message = form.errors.as_text()
             messages.warning(request, f'Something went wrong: {error_message}')
             return redirect('register-applicant')
-            #messages.warning(request, 'Something went wrong.')
-            #return redirect('register-applicant')
     else:
         form = RegisterUserForm()
         context = {'form': form}
@@ -43,7 +41,8 @@ def register_recruiter(request):
             messages.info(request , 'Your account has been created. Please log in.')
             return redirect('login')
         else:
-            messages.warning(request, 'Something went wrong.')
+            error_message = form.errors.as_text()
+            messages.warning(request, f'Something went wrong: {error_message}')
             return redirect('register-recruiter')
     else:
         form = RegisterUserForm()
