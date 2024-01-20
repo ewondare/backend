@@ -21,10 +21,9 @@ def update_company(request):
                 messages.info(request, 'Your company data has been updated!')
                 return redirect('dashboard')
             else:
-                messages.warning(request, 'Something went wrong.')
-                #error_message = form.errors.as_text()
-                #messages.warning(request, f'Something went wrong: {error_message}')
-                #return redirect('dashboard')
+                error_message = form.errors.as_text()
+                messages.warning(request, f'Something went wrong: {error_message}')
+                return redirect('dashboard')
         else:
             form = UpdateCompanyForm(instance=company)
             context = {'form':form}
@@ -32,6 +31,7 @@ def update_company(request):
     else:
         messages.warning(request, 'Permission Denied.')
         return redirect('dashboard')
+    
 # view company details
 def company_details(request, pk):
     company = Company.objects.get(pk=pk)
