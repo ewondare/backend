@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import JobSerializer, ApplyJobSerializer, ResumeSerializer
-from .form import CreateJobForm
+from .form import CreateJobForm, UpdateJobForm
 from job.models import Job, ApplyJob
 from resume.models import Resume
 
@@ -43,14 +43,19 @@ def create_job_api(request):
         return Response(response_data, status=status.HTTP_403_FORBIDDEN)
     
 @api_view(['GET'])
-def company_jobs_api(request, pk):
-    try:
-        jobs = Job.objects.filter(company_id=pk)
-        job_serializer = JobSerializer(jobs, many=True)
-        return Response(job_serializer.data, status=200)
-    except Job.DoesNotExist:
-        response_data = {'message': 'Company jobs not found.'}
-        return Response(response_data, status=404)
+def company_jobs_api(request, company_id):
+    if request.user.is_recruiter and request.user.company_id == company_id:
+        try:
+            company_jobs = Job.objects.filter(company_id=company_id)
+            jobs_serializer = JobSerializer(company_jobs, many=True)
+            return Response(jobs_serializer.data, status=200)
+        
+        except Exception as e:
+            response_data = {'message': str(e)}
+            return Response(response_data, status=500)
+    
+    response_data = {'message': 'Permission denied.'}
+    return Response(response_data, status=403)
     
 @api_view(['GET'])
 def job_resumes_api(request, pk):
@@ -107,7 +112,7 @@ def update_applyjob_status_api(request, job_id, user_id):
 def applied_jobs_api(request):
     try:
         user = request.user
-        
+
         apply_jobs = ApplyJob.objects.filter(user=user)
         apply_jobs_serializer = ApplyJobSerializer(apply_jobs, many=True)
 
@@ -122,3 +127,54 @@ def applied_jobs_api(request):
     except Exception as e:
         response_data = {'message': str(e)}
         return Response(response_data, status=500)
+    
+
+@api_view(['POST'])
+def update_job_api(request, pk):
+    if request.user.is_recruiter and request.user.has_company:
+        try:
+            job = Job.objects.get(pk=pk)
+            
+            form = UpdateJobForm(request.POST, instance=job)
+            if form.is_valid():
+                form.save()
+                response_data = {'message': 'Your Job Ad is now updated.'}
+                return Response(response_data, status=200)
+            
+            response_data = {'message': 'Something went wrong.', 'errors': form.errors}
+            return Response(response_data, status=400)
+        
+        except Job.DoesNotExist:
+            response_data = {'message': 'Job not found.'}
+            return Response(response_data, status=404)
+        
+        except Exception as e:
+            response_data = {'message': str(e)}
+            return Response(response_data, status=500)
+    
+    response_data = {'message': 'Permission denied.'}
+    return Response(response_data, status=403)
+
+@api_view(['POST'])
+def apply_to_job_api(request, pk):
+    if request.user.is_authenticated and request.user.is_applicant:
+        try:
+            job = Job.objects.get(pk=pk)
+            if ApplyJob.objects.filter(user=request.user, job=job).exists():
+                response_data = {'message': 'You already applied for this job.'}
+                return Response(response_data, status=403)
+            else:
+                ApplyJob.objects.create(job=job, user=request.user, status='Pending')
+                response_data = {'message': 'You have successfully applied! Please check your dashboard.'}
+                return Response(response_data, status=200)
+        
+        except Job.DoesNotExist:
+            response_data = {'message': 'Job not found.'}
+            return Response(response_data, status=404)
+        
+        except Exception as e:
+            response_data = {'message': str(e)}
+            return Response(response_data, status=500)
+    
+    response_data = {'message': 'Permission denied.'}
+    return Response(response_data, status=401)
