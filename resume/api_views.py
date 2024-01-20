@@ -12,7 +12,7 @@ def update_resume_api(request):
         try:
             resume = Resume.objects.get(user=request.user)
             
-            form = UpdateResumeForm(request.POST, request.FILES, instance=resume)
+            form = UpdateResumeForm(request.data, request.FILES, instance=resume)
             if form.is_valid():
                 var = form.save(commit=False)
                 user = User.objects.get(id=request.user.id)

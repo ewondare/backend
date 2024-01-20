@@ -135,7 +135,7 @@ def update_job_api(request, pk):
         try:
             job = Job.objects.get(pk=pk)
             
-            form = UpdateJobForm(request.POST, instance=job)
+            form = UpdateJobForm(request.data, instance=job)
             if form.is_valid():
                 form.save()
                 response_data = {'message': 'Your Job Ad is now updated.'}

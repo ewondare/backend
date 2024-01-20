@@ -9,7 +9,7 @@ from django.middleware.csrf import get_token
 
 @api_view(['POST'])
 def register_applicant_api(request):
-    form = RegisterUserForm(request.POST)
+    form = RegisterUserForm(request.data)
     if form.is_valid():
         var = form.save(commit=False)
         var.is_applicant = True
@@ -30,7 +30,7 @@ def register_applicant_api(request):
     
 @api_view(['POST'])
 def register_recruiter_api(request):
-    form = RegisterUserForm(request.POST)
+    form = RegisterUserForm(request.data)
     if form.is_valid():
         var = form.save(commit=False)
         var.is_recruiter = True

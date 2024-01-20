@@ -10,7 +10,7 @@ from .form import CreateJobForm, UpdateJobForm
 def create_job(request):
     if request.user.is_recruiter and request.user.has_company:
         if request.method == 'POST':
-            form = CreateJobForm(request.POST)
+            form = CreateJobForm(request.data)
             if form.is_valid():
                 var = form.save(commit=False)
                 var.user = request.user
@@ -35,7 +35,7 @@ def update_job(request, pk):
     if request.user.is_recruiter and request.user.has_company:
         job = Job.objects.get(pk=pk)
         if request.method == 'POST':
-            form = UpdateJobForm(request.POST , instance=job)
+            form = UpdateJobForm(request.data , instance=job)
             if form.is_valid():
                 form.save()
                 messages.info(request, 'Your JobAD is now updated.')
