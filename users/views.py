@@ -5,7 +5,6 @@ from .models import User
 from .form import RegisterUserForm
 from resume.models import Resume
 from company.models import Company
-# Create your views here.
 
 # register applicant 
 def register_applicant(request):
