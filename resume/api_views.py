@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from .models import Resume
 from .form import UpdateResumeForm
 from django.contrib.auth.models import User
-from ..job.models import Job
+from job.models import Job
 from .serializers import JobSerializer
 
 @api_view(['POST'])
