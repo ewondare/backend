@@ -87,3 +87,38 @@ def specific_resume_api(request, job_id, user_id):
     except (Resume.DoesNotExist, ApplyJob.DoesNotExist):
         response_data = {'message': 'Resume not found for the specified job.'}
         return Response(response_data, status=404)
+    
+@api_view(['PUT'])
+def update_applyjob_status_api(request, job_id, user_id):
+    try:
+        apply_job = ApplyJob.objects.get(job_id=job_id, user_id=user_id)
+        status = request.data.get('status')  
+
+        apply_job.status = status
+        apply_job.save()
+
+        serializer = ApplyJobSerializer(apply_job)
+        return Response(serializer.data, status=200)
+    except ApplyJob.DoesNotExist:
+        response_data = {'message': 'ApplyJob not found.'}
+        return Response(response_data, status=404)
+    
+@api_view(['GET'])
+def applied_jobs_api(request):
+    try:
+        user = request.user
+        
+        apply_jobs = ApplyJob.objects.filter(user=user)
+        apply_jobs_serializer = ApplyJobSerializer(apply_jobs, many=True)
+
+        jobs = [apply_job.job for apply_job in apply_jobs]
+        jobs_serializer = JobSerializer(jobs, many=True)
+
+        response_data = {
+            'apply_jobs': apply_jobs_serializer.data,
+            'jobs': jobs_serializer.data
+        }
+        return Response(response_data, status=200)
+    except Exception as e:
+        response_data = {'message': str(e)}
+        return Response(response_data, status=500)
