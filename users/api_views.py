@@ -6,47 +6,61 @@ from .form import RegisterUserForm
 from resume.models import Resume
 from company.models import Company
 from django.middleware.csrf import get_token
+from django.db import IntegrityError
 
 @api_view(['POST'])
 def register_applicant_api(request):
     form = RegisterUserForm(request.data)
     if form.is_valid():
-        var = form.save(commit=False)
-        var.is_applicant = True
-        var.save()
-        Resume.objects.create(user=var)
-        userid = var.id
-        token = get_token(request)
-        response_data = {
-            'message': 'Your account has been created successfully.',
-            'userid': userid,
-            'token': token
-        }
-        return Response(response_data, status=201)
+        try:
+            user = form.save(commit=False)
+            user.username = user.email
+            user.is_applicant = True
+            user.save()
+            Resume.objects.create(user=user)
+            userid = user.id
+            token = get_token(request)
+            response_data = {
+                'message': 'Your account has been created successfully.',
+                'userid': userid,
+                'token': token
+            }
+            return Response(response_data, status=201)
+        except IntegrityError:
+            error_message = 'A user with the same email or username already exists.'
+            response_data = {'message': error_message}
+            return Response(response_data, status=400)
+
     else:
         error_message = form.errors.as_text()
-        response_data = {'message': f'Something went wrong: {error_message}'}
+        response_data = {'message': error_message}
         return Response(response_data, status=400)
     
 @api_view(['POST'])
 def register_recruiter_api(request):
     form = RegisterUserForm(request.data)
     if form.is_valid():
-        var = form.save(commit=False)
-        var.is_recruiter = True
-        var.save()
-        Company.objects.create(user=var)
-        userid = var.id
-        token = get_token(request)
-        response_data = {
-            'message': 'Your account has been created successfully.',
-            'userid': userid,
-            'token': token
-        }
-        return Response(response_data, status=201)
+        try:
+            user = form.save(commit=False)
+            user.username = user.email
+            user.is_applicant = True
+            user.save()
+            Company.objects.create(user=user)
+            userid = user.id
+            token = get_token(request)
+            response_data = {
+                'message': 'Your account has been created successfully.',
+                'userid': userid,
+                'token': token
+            }
+            return Response(response_data, status=201)
+        except IntegrityError:
+            error_message = 'A user with the same email or username already exists.'
+            response_data = {'message': error_message}
+            return Response(response_data, status=400)
     else:
         error_message = form.errors.as_text()
-        response_data = {'message': f'Something went wrong: {error_message}'}
+        response_data = {'message': error_message}
         return Response(response_data, status=400)
 
 @api_view(['POST'])
