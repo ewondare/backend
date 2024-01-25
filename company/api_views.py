@@ -10,6 +10,25 @@ from .serializers import CompanySerializer, JobSerializer
 
 @api_view(['POST'])
 def update_company_api(request):
+    """
+    Update company data for the authenticated recruiter user.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing the company data.
+        
+    Returns:
+        Response: A JSON response containing the following fields:
+            - message (str): A success message indicating that the company data has been updated.
+            - token (str): A CSRF token for subsequent requests.
+
+        The response has a status code of 200 (OK) if the company data is updated successfully,
+        or a status code of 400 (Bad Request) if the request contains invalid data.
+        If the user is not a recruiter, the response has a status code of 403 (Forbidden).
+    
+    Raises:
+        N/A
+    """
+
     if request.user.is_recruiter:
         company = Company.objects.get(user=request.user)
         form = UpdateCompanyForm(request.data, instance=company)
@@ -36,6 +55,25 @@ def update_company_api(request):
 
 @api_view(['GET'])
 def company_details_api(request, pk):
+    """
+    Retrieve details of a specific company and its associated jobs.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        pk (int): The primary key of the company to retrieve details for.
+
+    Returns:
+        Response: A JSON response containing the following fields:
+            - company (dict): A serialized representation of the company.
+            - jobs (list): A list of serialized representations of the company's jobs.
+
+        The response has a status code of 200 (OK) if the company is found,
+        or a status code of 404 (Not Found) if the company does not exist.
+
+    Raises:
+        Company.DoesNotExist: If the company with the specified primary key does not exist.
+    """
+        
     try:
         company = Company.objects.get(pk=pk)
         jobs = Job.objects.filter(company=company)

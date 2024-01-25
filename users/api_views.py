@@ -10,6 +10,29 @@ from django.db import IntegrityError
 
 @api_view(['POST'])
 def register_applicant_api(request):
+    """
+    Register a new applicant user.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        Response: A JSON response containing the following fields:
+            - message (str): A message indicating the result of the registration.
+            - userid (int): The ID of the registered user.
+            - token (str): The CSRF token for the registered user.
+
+    Raises:
+        IntegrityError: If a user with the same email or username already exists.
+
+    Example JSON response:
+        {
+            "message": "Your account has been created successfully.",
+            "userid": 1,
+            "token": "xxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+    """
+
     form = RegisterUserForm(request.data)
     if form.is_valid():
         try:
@@ -38,6 +61,29 @@ def register_applicant_api(request):
     
 @api_view(['POST'])
 def register_recruiter_api(request):
+    """
+    Register a new recruiter user.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        Response: A JSON response containing the following fields:
+            - message (str): A message indicating the result of the registration.
+            - userid (int): The ID of the registered user.
+            - token (str): The CSRF token for the registered user.
+
+    Raises:
+        IntegrityError: If a user with the same email or username already exists.
+
+    Example JSON response:
+        {
+            "message": "Your account has been created successfully.",
+            "userid": 1,
+            "token": "xxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+    """
+
     form = RegisterUserForm(request.data)
     if form.is_valid():
         try:
@@ -65,6 +111,24 @@ def register_recruiter_api(request):
 
 @api_view(['POST'])
 def login_user_api(request):
+    """
+    Log in a user.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        Response: A JSON response containing the following fields:
+            - message (str): A message indicating the result of the login.
+            - token (str): The CSRF token for the logged-in user.
+
+    Example JSON response:
+        {
+            "message": "Successfully logged in.",
+            "token": "xxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+    """
+
     email = request.data.get('email')
     password = request.data.get('password')
 
