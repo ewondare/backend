@@ -128,16 +128,16 @@ def login_user_api(request):
             "token": "xxxxxxxxxxxxxxxxxxxxxxxx"
         }
     """
-
     email = request.data.get('email')
     password = request.data.get('password')
 
-    user = authenticate(request, email=email, password=password)
+    user = authenticate(request, username=email, password=password)
     if user is not None and user.is_active:
         login(request, user)
         token = get_token(request)
         response_data = {
             'message': 'Successfully logged in.',
+            'userid': user.id,
             'token': token
         }
         return Response(response_data, status=200)
