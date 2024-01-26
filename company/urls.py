@@ -6,5 +6,5 @@ urlpatterns = [
     path('company-details/<int:pk>', views.company_details , name='company-details'),
 
     path('api/update-company/', api_views.update_company_api, name='update-company-api'),
-    path('api/company-details/<int:pk>', api_views.company_details_api , name='company-details-api'),
+    path('api/company-details', api_views.company_details_api , name='company-details-api'),
 ]

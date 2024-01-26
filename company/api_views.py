@@ -54,7 +54,7 @@ def update_company_api(request):
         return Response(response_data, status=403)
 
 @api_view(['GET'])
-def company_details_api(request, pk):
+def company_details_api(request):
     """
     Retrieve details of a specific company and its associated jobs.
 
@@ -73,9 +73,9 @@ def company_details_api(request, pk):
     Raises:
         Company.DoesNotExist: If the company with the specified primary key does not exist.
     """
-        
+    
     try:
-        company = Company.objects.get(pk=pk)
+        company = Company.objects.get(user=request.user)
         jobs = Job.objects.filter(company=company)
         company_serializer = CompanySerializer(company)
         jobs_serializer = JobSerializer(jobs, many=True)
