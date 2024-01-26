@@ -111,7 +111,10 @@ def company_jobs_api(request):
         try:
             company_jobs = Job.objects.filter(company_id=company.id)
             jobs_serializer = JobSerializer(company_jobs, many=True)
-            return Response(jobs_serializer.data, status=200)
+
+            jobs_data = [{'id': job.id, 'data': JobSerializer(job).data} for job in company_jobs]
+        
+            return Response(jobs_data, status=status.HTTP_200_OK)
         
         except Exception as e:
             response_data = {'message': str(e)}
