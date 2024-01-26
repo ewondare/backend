@@ -5,12 +5,11 @@ from .models import User
 from .form import RegisterUserForm
 from resume.models import Resume
 from company.models import Company
-# Create your views here.
 
 # register applicant 
 def register_applicant(request):
     if request.method == 'POST':
-        form = RegisterUserForm(request.POST)
+        form = RegisterUserForm(request.data)
         if form.is_valid():
             var = form.save(commit=False)
             var.is_applicant = True
@@ -31,7 +30,7 @@ def register_applicant(request):
 # register recruiter only
 def register_recruiter(request):
     if request.method == 'POST':
-        form = RegisterUserForm(request.POST)
+        form = RegisterUserForm(request.data)
         if form.is_valid():
             var = form.save(commit=False)
             var.is_recruiter = True
@@ -53,8 +52,8 @@ def register_recruiter(request):
 # login a user
 def login_user(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        email = request.data.get('email')
+        password = request.data.get('password')
 
         user = authenticate(request, username=email , password=password)
         if user is not None and user.is_active:

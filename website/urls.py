@@ -7,6 +7,6 @@ urlpatterns = [
     path('job-details/<int:pk>/', views.job_details, name='job-details'),
 
 
-    path('api/job-listing/', api_views.job_listing_api, name='job-listing-api'),
-    path('api/job-details/<int:pk>/', api_views.job_details_api, name='job-details-api'),
+    path('api/last-jobs/', api_views.last_jobs_api, name='last-jobs-api'),
+    path('api/search-job/', api_views.search_job_api, name='search-job-api'),
 ]
