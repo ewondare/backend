@@ -6,6 +6,7 @@ from .form import RegisterUserForm
 from resume.models import Resume
 from company.models import Company
 from django.middleware.csrf import get_token
+from rest_framework.authtoken.models import Token
 from django.db import IntegrityError
 
 @api_view(['POST'])
@@ -42,11 +43,11 @@ def register_applicant_api(request):
             user.save()
             Resume.objects.create(user=user)
             userid = user.id
-            token = get_token(request)
+            token, created = Token.objects.get_or_create(user=user)
             response_data = {
                 'message': 'Your account has been created successfully.',
                 'userid': userid,
-                'token': token
+                'token': token.key
             }
             return Response(response_data, status=201)
         except IntegrityError:
@@ -93,11 +94,11 @@ def register_recruiter_api(request):
             user.save()
             Company.objects.create(user=user)
             userid = user.id
-            token = get_token(request)
+            token, created = Token.objects.get_or_create(user=user)
             response_data = {
                 'message': 'Your account has been created successfully.',
                 'userid': userid,
-                'token': token
+                'token': token.key
             }
             return Response(response_data, status=201)
         except IntegrityError:
@@ -134,11 +135,11 @@ def login_user_api(request):
     user = authenticate(request, username=email, password=password)
     if user is not None and user.is_active:
         login(request, user)
-        token = get_token(request)
+        token, created = Token.objects.get_or_create(user=user)
         response_data = {
             'message': 'Successfully logged in.',
             'userid': user.id,
-            'token': token
+            'token': token.key
         }
         return Response(response_data, status=200)
     else:

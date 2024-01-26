@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     
     'widget_tweaks',
     'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'django_filters',
     'corsheaders',
 ]
@@ -144,3 +146,13 @@ AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend']
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Token',),
+}
