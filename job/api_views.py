@@ -5,6 +5,7 @@ from .serializers import JobSerializer, ApplyJobSerializer, ResumeSerializer
 from .form import CreateJobForm, UpdateJobForm
 from job.models import Job, ApplyJob
 from resume.models import Resume
+from company.models import Company
 
 @api_view(['GET'])
 def job_details_api(request, pk):
@@ -90,13 +91,12 @@ def create_job_api(request):
         return Response(response_data, status=status.HTTP_403_FORBIDDEN)
     
 @api_view(['GET'])
-def company_jobs_api(request, company_id):
+def company_jobs_api(request):
     """
     Retrieve all jobs associated with a specific company.
 
     Args:
         request (HttpRequest): The HTTP request object.
-        company_id (int): The primary key of the company to retrieve jobs for.
 
     Returns:
         Response: A JSON response containing a list of serialized representations of the company's jobs,
@@ -106,10 +106,10 @@ def company_jobs_api(request, company_id):
     Raises:
         N/A
     """
-
-    if request.user.is_recruiter and request.user.company_id == company_id:
+    company = Company.objects.get(user=request.user)
+    if request.user.is_recruiter:
         try:
-            company_jobs = Job.objects.filter(company_id=company_id)
+            company_jobs = Job.objects.filter(company_id=company.id)
             jobs_serializer = JobSerializer(company_jobs, many=True)
             return Response(jobs_serializer.data, status=200)
         
