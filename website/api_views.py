@@ -97,8 +97,8 @@ def search_job_api(request):
     """
 
     try:
-        title = request.GET.get('title')
-        location = request.GET.get('location')
+        title = request.data.get('title')
+        location = request.data.get('location')
 
         jobs = Job.objects.filter(is_available=True)
 
