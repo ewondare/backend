@@ -110,7 +110,7 @@ def company_jobs_api(request):
     if request.user.is_recruiter:
         try:
             company_jobs = Job.objects.filter(company_id=company.id)
-            jobs_serializer = JobSerializer(company_jobs, many=True)
+            # jobs_serializer = JobSerializer(company_jobs, many=True)
 
             jobs_data = [{'id': job.id, 'data': JobSerializer(job).data} for job in company_jobs]
         

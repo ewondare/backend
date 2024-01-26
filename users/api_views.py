@@ -88,7 +88,7 @@ def register_recruiter_api(request):
         try:
             user = form.save(commit=False)
             user.username = user.email
-            user.is_applicant = True
+            user.is_recruiter = True
             user.save()
             Company.objects.create(user=user)
             userid = user.id
