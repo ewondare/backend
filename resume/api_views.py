@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Resume
 from .form import UpdateResumeForm
-from django.contrib.auth.models import User
+from users.models import User
 from job.models import Job
 from .serializers import JobSerializer
 
@@ -21,6 +21,7 @@ def update_resume_api(request):
     Raises:
         Resume.DoesNotExist: If the resume for the user is not found.
     """
+    # print(request.data)
     if request.user.is_authenticated and request.user.is_applicant:
         try:
             resume = Resume.objects.get(user=request.user)

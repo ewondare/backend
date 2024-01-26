@@ -1,11 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login , logout
-from .models import User
 from .form import RegisterUserForm
 from resume.models import Resume
 from company.models import Company
-from django.middleware.csrf import get_token
 from rest_framework.authtoken.models import Token
 from django.db import IntegrityError
 
@@ -139,7 +137,7 @@ def login_user_api(request):
         response_data = {
             'message': 'Successfully logged in.',
             'userid': user.id,
-            'token': token.key
+            'token': token.key,
         }
         return Response(response_data, status=200)
     else:
