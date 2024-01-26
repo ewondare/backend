@@ -6,6 +6,6 @@ urlpatterns = [
     path('resume-details/', views.resume_details, name='resume-details'),
 
     path('api/update-resume/', api_views.update_resume_api, name='update-resume-api'),
-    path('api/recommended-jobs/', api_views.recommended_jobs_api, name='recommended-jobs-api'),
+    path('api/recommended-jobs/<int:user_id>', api_views.recommended_jobs_api, name='recommended-jobs-api'),
 ]
 

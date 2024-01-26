@@ -1,17 +1,19 @@
 from django.test import TestCase
 from django.urls import reverse
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient , APITestCase
 from rest_framework import status
 from job.models import Job , Industry , ApplyJob
 from company.models import Company
 from .serializers import JobSerializer
 from users.models import User
 from resume.models import Resume
+from .api_views import last_jobs_api
+
 
 class SearchJobAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.url = reverse('search-job-api')  # Assuming you have a URL name for the API view
+        self.url = reverse('search-job-api')  
         
         self.user1 = User.objects.create(username = 'gmail1@main.com' , email='gmail1@main.com',is_applicant=True , is_recruiter=False , has_company=False , has_resume=True)
         self.user2 = User.objects.create(username = 'gmail2@main.com' , email='gmail2@main.com',is_applicant=False , is_recruiter=True , has_company=True , has_resume=False)
@@ -23,9 +25,10 @@ class SearchJobAPITest(TestCase):
         
 
         self.job1 = Job.objects.create(job_type ='Remote',job_experience_needed ='Junior',user = self.user2 , company = self.company1 ,  title='Software Engineer', is_available=True,
-        description='good job',salary = 200000 , industry =self.industry1 ,qualifications ='skill1' , responsibilities ='ceo')
+        description='good job',salary = 200000 , industry =self.industry1 ,qualifications ='skill1' , responsibilities ='res1')
+
         
-        #self.resume1 = Resume.objects.create(user = user1 , name='name1',lastName = 'lastname2', age = 20 , gender='Female')
+        
         self.resume1 = Resume.objects.create(
             user=self.user1,
             name='John',
@@ -47,6 +50,7 @@ class SearchJobAPITest(TestCase):
 
 
     def test_search_job_without_filters(self):
+
         print(self.url)
         response = self.client.get(self.url)
         print(response.data)
@@ -75,3 +79,33 @@ class SearchJobAPITest(TestCase):
         serializer = JobSerializer(jobs, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
+
+
+
+
+
+class LastJobsAPITest(APITestCase ):
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse('search-job-api')  
+
+
+
+    def test_last_jobs_api(self):
+        response = self.client.get(self.url)
+        jobs = Job.objects.filter(is_available=True).order_by('-timestamp')
+        serializer = JobSerializer(jobs, many=True)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
+
+
+    def test_last_jobs_api_no_available_jobs(self):
+    
+        Job.objects.all().update(is_available=False)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, [])
+
+   
+
+

@@ -39,7 +39,7 @@ class Resume(models.Model):
     certifications = models.CharField(max_length=1000 , null=True, blank=True)
     education = models.CharField(max_length=1000 , null=True, blank=True)
     photo = models.ImageField(upload_to ='uploads/photo/', null=True, blank=True)
-    upload_resume = models.FileField(upload_to='uploads/resume_file/')
+    upload_resume = models.FileField(upload_to='uploads/resume_file/',blank=True)
 
     def __str__(self):
         return f'{self.name} {self.lastName}'
