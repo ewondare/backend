@@ -8,6 +8,20 @@ from .serializers import JobSerializer
 
 @api_view(['POST'])
 def update_resume_api(request):
+    """
+    Update the resume for the authenticated applicant user.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        Response: A JSON response containing the following fields:
+            - message (str): A message indicating the result of the resume update.
+
+    Raises:
+        Resume.DoesNotExist: If the resume for the user is not found.
+    """
+    # print(request.data)
     if request.user.is_authenticated and request.user.is_applicant:
         try:
             resume = Resume.objects.get(user=request.user)
@@ -46,6 +60,40 @@ def get_recommended_jobs(user, number_of_jobs):
 
 @api_view(['GET'])
 def recommended_jobs_api(request, user_id):
+    """
+    Retrieve recommended jobs for a user.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        user_id (int): The ID of the user for whom to retrieve recommended jobs.
+
+    Returns:
+        Response: A JSON response containing the recommended jobs.
+
+    Raises:
+        User.DoesNotExist: If the user with the specified ID does not exist.
+
+    Example JSON response:
+        {
+            "recommended_jobs": [
+                {
+                    "id": 1,
+                    "title": "Job Title 1",
+                    "company": "Company 1",
+                    "location": "Location 1",
+                    ...
+                },
+                {
+                    "id": 2,
+                    "title": "Job Title 2",
+                    "company": "Company 2",
+                    "location": "Location 2",
+                    ...
+                },
+                ...
+            ]
+        }
+    """
     try:
         user = User.objects.get(id=user_id)
         

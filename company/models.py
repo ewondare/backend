@@ -3,7 +3,7 @@ from users.models import User
 # Create your models here.
 class Company(models.Model):
     user = models.OneToOneField(User , on_delete=models.CASCADE)
-    name = models.CharField(max_length=100 , null=True, blank=True)
+    name = models.CharField(max_length=100 , null=True)
     industry = models.CharField(max_length=100 , null=True, blank=True)
     website = models.CharField(max_length=100 , null=True, blank=True)
     about = models.CharField(max_length=1000 , null=True, blank=True)
