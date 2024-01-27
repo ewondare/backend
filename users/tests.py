@@ -11,9 +11,6 @@ from company.models import Company
 from users.models import User
 from resume.models import Resume
 
-
-
-
 class RegisterApplicantAPITest(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
@@ -184,3 +181,18 @@ class LoginUserAPITest(TestCase):
         
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['message'], 'Invalid credentials. Please try again.')
+
+class LogoutUserAPITest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user1 = User.objects.create(username = 'gmail1@main.com' ,password = '98328923lksdfa', email='gmail1@main.com',is_applicant=True , is_recruiter=False , has_company=False , has_resume=False)
+        
+        self.url = reverse('logout-user-api')
+
+        self.client.force_authenticate(user=self.user1)
+
+    def test_logout_user(self):
+        response = self.client.post(self.url)
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['message'], 'Successfully logged out.')

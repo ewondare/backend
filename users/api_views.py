@@ -143,3 +143,23 @@ def login_user_api(request):
     else:
         response_data = {'message': 'Invalid credentials. Please try again.'}
         return Response(response_data, status=400)
+    
+@api_view(['POST'])
+def logout_user_api(request):
+    """
+    Log out a user.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        Response: A JSON response containing a message indicating the result of the logout.
+
+    Example JSON response:
+        {
+            "message": "Successfully logged out."
+        }
+    """
+    logout(request)
+    response_data = {'message': 'Successfully logged out.'}
+    return Response(response_data, status=200)
