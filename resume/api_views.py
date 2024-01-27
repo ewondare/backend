@@ -21,7 +21,6 @@ def update_resume_api(request):
     Raises:
         Resume.DoesNotExist: If the resume for the user is not found.
     """
-    # print(request.data)
     if request.user.is_authenticated and request.user.is_applicant:
         try:
             resume = Resume.objects.get(user=request.user)

@@ -7,14 +7,15 @@ from users.models import User
 from job.models import Job , Industry , ApplyJob
 from company.models import Company
 from .api_views import get_recommended_jobs
-from rest_framework import status
+from rest_framework import status 
+from rest_framework.test import APIClient
 
 
 
 
 class UpdateResumeAPITest(TestCase):
     def setUp(self):
-        self.client = Client()
+        self.client = APIClient()
         self.url = reverse('update-resume-api')
         self.user1 = User.objects.create(username = 'gmail1@main.com' , email='gmail1@main.com',is_applicant=True , is_recruiter=False , has_company=False , has_resume=True)
         self.user2 = User.objects.create(username = 'gmail2@main.com' , email='gmail2@main.com',is_applicant=False , is_recruiter=True , has_company=True , has_resume=False)
@@ -35,6 +36,8 @@ class UpdateResumeAPITest(TestCase):
             education='Bachelor of Science',
         )
         self.valid_payload = {
+            'name' : 'name1',
+            'lastName':'lastname1',
             'gender' : 'Female',
             'phone_number' : '0987654321',
             'location' : 'Tabriz'
@@ -45,23 +48,31 @@ class UpdateResumeAPITest(TestCase):
             'phone_number' : '0987654321',
             'location' : 'Shiraz'
         }
+
+        
+        
+
     
     def test_update_resume_api_with_valid_data(self):
         self.client.force_login(self.user1)
+        self.client.force_authenticate(user=self.user1)
         response = self.client.post(self.url, data=self.valid_payload)
         self.assertEqual(response.status_code, 200)
         self.assertIn('Your Resume has been updated.', response.data['message'])
+        
 
       
     def test_update_resume_api_with_invalid_data(self):
         self.client.force_login(self.user1)
+        self.client.force_authenticate(user=self.user1)
         response = self.client.post(self.url, data=self.invalid_payload)
         self.assertEqual(response.status_code, 400)
         self.assertIn('Something went wrong:', response.data['message'])
-      
+     
     def test_update_resume_api_without_applicant_permission(self):
         
         self.client.force_login(self.user2)
+        self.client.force_authenticate(user=self.user2)
         response = self.client.post(self.url, data=self.valid_payload)
         self.assertEqual(response.status_code, 403)
         self.assertIn('Permission denied.', response.data['message'])
@@ -176,7 +187,7 @@ class RecommendedJobsAPITest(TestCase):
         self.assertEqual(len(recommended_jobs), 2)
         self.assertEqual(recommended_jobs[0]['title'], 'title1')
         self.assertEqual(recommended_jobs[1]['title'], 'title2')
-    
+
     def test_recommended_jobs_api_invalid_user(self):
         url = reverse('recommended-jobs-api', args=[999])
         response = self.client.get(url)

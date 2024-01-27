@@ -50,10 +50,7 @@ class SearchJobAPITest(TestCase):
 
 
     def test_search_job_without_filters(self):
-
-        print(self.url)
         response = self.client.get(self.url)
-        print(response.data)
         jobs = Job.objects.filter(is_available=True)
         serializer = JobSerializer(jobs, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
