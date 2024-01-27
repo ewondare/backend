@@ -47,64 +47,155 @@ class RegisterApplicantAPITest(TestCase):
             certifications='Certified in XYZ',
             education='Bachelor of Science',
         )
-'''
-    def test_register_applicant_api_success(self):
-        # Create a valid request data
-        data = {
-            'email': 'gmail1@main.com',
-            'password1': 'password',
-            'password2': 'password'
-            # Include other required fields in the data
+
+
+    def test_register_applicant_success(self):
+        
+        payload = {
+            'email': 'test1@gmail.com',
+            'password1': '3405934klfjas',
+            'password2':'3405934klfjas',
+            'username' : 'test1@gmail.com',
+            'is_applicant' : True
         }
 
-        # Send a POST request to the API
-        response = self.client.post(self.url, data)
+        response = self.client.post(self.url, payload, format='json')
 
-        # Check the response status code and data
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['message'], 'Your account has been created successfully.')
+        self.assertIn('userid', response.data)
+        self.assertIn('token', response.data)
 
-        # Check if the user is created in the database
-        user = User.objects.get(email='gmail1@main.com')
-        self.assertEqual(user.is_applicant, True)
-        # Add more assertions for other user attributes if needed
+        user = User.objects.get(email=payload['email'])
+        self.assertEqual(user.username, payload['username'])
+        self.assertTrue(user.is_applicant)
+        self.assertEqual(user.resume.user, user)
 
-        # Check if a resume is created for the user
-        self.assertTrue(Resume.objects.filter(user=user).exists())
+    def test_register_applicant_duplicate_email(self):
 
-
-        # Check if the response contains the user ID and token
-        self.assertEqual(response.data['userid'], user.id)
-        # Add assertions for the token if needed
-
-    def test_register_applicant_api_duplicate_email(self):
-        # Create an existing user with the same email
-        User.objects.create(email='test@example.com', password='password')
-
-        # Create a request data with the duplicate email
-        data = {
-            'email': 'test@example.com',
-            'password': 'password',
-            # Include other required fields in the data
+        payload = {
+            'email': 'gmail1@main.com',
+            'password1': '40981oidaflkj',
+            'password2': '40981oidaflkj'
         }
 
-        # Send a POST request to the API
-        response = self.client.post(self.url, data)
+        response = self.client.post(self.url, payload, format='json')
 
-        # Check the response status code and data
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['message'], 'A user with the same email or username already exists.')
 
+
     def test_register_applicant_api_invalid_data(self):
-        # Create an invalid request data
-        data = {
-            # Missing required fields or invalid field values
+        
+        payload = {
+            'email': 'test1@gmail.com',
+            'password1': '3405934klfjas',
+            'password2':'9401i2lsakdf',
+            'username' : 'test1@gmail.com',
+            'is_applicant' : True
         }
 
-        # Send a POST request to the API
-        response = self.client.post(self.url, data)
+        
+        response = self.client.post(self.url, payload , format='json')
 
-        # Check the response status code and data
         self.assertEqual(response.status_code, 400)
-        # Add more assertions for the error message if needed
-'''
+
+
+class RegisterRecruiterAPITest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse('register-recruiter-api')
+        self.user2 = User.objects.create(username = 'gmail2@main.com' , email='gmail2@main.com',is_applicant=False , is_recruiter=True , has_company=True , has_resume=False)
+
+    def test_register_recruiter_success(self):
+        
+        payload = {
+            'email': 'test1@example.com',
+            'password1': '241t4kgalsm',
+            'password2': '241t4kgalsm',
+            'username' : 'test1@example.com',
+            'is_recruiter' : True
+        }
+
+        response = self.client.post(self.url, payload, format='json')
+
+        
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['message'], 'Your account has been created successfully.')
+        self.assertIn('userid', response.data)
+        self.assertIn('token', response.data)
+
+        
+        user = User.objects.get(email=payload['email'])
+        self.assertEqual(user.username, payload['username'])
+        self.assertTrue(user.is_recruiter)
+        self.assertEqual(user.company.user, user)
+
+    def test_register_recruiter_duplicate_email(self):
+    
+        
+        payload = {
+            'email': 'gmail2@main.com',
+            'password1': '241t4kgalsm',
+            'password2': '241t4kgalsm',
+            'username' : 'gmail2@main.com',
+            'is_recruiter' : True
+        }
+
+        
+        response = self.client.post(self.url, payload, format='json')
+
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['message'], 'A user with the same email or username already exists.')
+
+    def test_register_recruiter_api_invalid_data(self):
+        
+        payload = {
+            'email': 'test1@gmail.com',
+            'password1': '3405934klfjas',
+            'password2':'24t4tsasdlasda',
+            'username' : 'test1@gmail.com',
+        }
+
+        
+        response = self.client.post(self.url, payload , format='json')
+
+        self.assertEqual(response.status_code, 400)
+
+
+class LoginUserAPITest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.url = reverse('login-user-api')
+
+        self.user1 = User.objects.create(username = 'gmail1@main.com' ,password = '98328923lksdfa', email='gmail1@main.com',is_applicant=True , is_recruiter=False , has_company=False , has_resume=True)
+
+    def test_login_user_success(self):
+
+        payload = {
+            'email': 'gmail1@main.com',
+            
+        }
+
+        
+        response = self.client.post(self.url, payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], 'Successfully logged in.')
+        self.assertIn('token', response.data)
+        self.assertEqual(response.data['userid'], self.user1.id)
+
+    def test_login_user_invalid_credentials(self):
+        
+        payload = {
+            'email': 'gmail1@main.com',
+            'password': '12323489fj',
+        }
+
+        
+        response = self.client.post(self.url, payload, format='json')
+
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['message'], 'Invalid credentials. Please try again.')
