@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
 from .serializers import JobSerializer, ApplyJobSerializer, ResumeSerializer
 from .form import CreateJobForm, UpdateJobForm
@@ -209,7 +210,7 @@ def specific_resume_api(request, job_id, user_id):
 
     try:
         resume = Resume.objects.get(user_id=user_id)
-        apply_job = ApplyJob.objects.get(job_id=job_id, resume=resume)
+        apply_job = ApplyJob.objects.get(job_id=job_id, user_id=user_id)
         
         resume_serializer = ResumeSerializer(resume)
         job_serializer = JobSerializer(apply_job.job)
@@ -298,6 +299,7 @@ def applied_jobs_api(request):
             'jobs': jobs_serializer.data
         }
         return Response(response_data, status=200)
+    
     except Exception as e:
         response_data = {'message': str(e)}
         return Response(response_data, status=500)

@@ -57,7 +57,6 @@ class UpdateResumeAPITest(TestCase):
         self.client.force_login(self.user1)
         self.client.force_authenticate(user=self.user1)
         response = self.client.post(self.url, data=self.valid_payload)
-        print('heyyy', response.data)
         self.assertEqual(response.status_code, 200)
         self.assertIn('Your Resume has been updated.', response.data['message'])
         

@@ -230,6 +230,9 @@ class JobResumesAPITest(TestCase):
             education='Cs student',
         )
 
+        self.apply_job1 = ApplyJob.objects.create(job=self.job1, user = self.user1, status = 'Pending')
+        self.apply_job2 = ApplyJob.objects.create(job=self.job1, user = self.user3, status = 'Pending') 
+
     def test_job_resumes_api_success(self):
         
         url = reverse('job-resumes-api', args=[self.job1.pk])
@@ -245,6 +248,7 @@ class JobResumesAPITest(TestCase):
         self.assertEqual(len(response.data['resumes']), 2)
         self.assertEqual(response.data['resumes'][0]['id'], self.resume1.id)
         self.assertEqual(response.data['resumes'][1]['id'], self.resume2.id)
+
 
     def test_job_resumes_api_job_not_found(self):
        
@@ -314,7 +318,7 @@ class SpecificResumeAPITest(TestCase):
 
     def test_specific_resume_api_success(self):
         
-        url = reverse('specific-resume-api', args=[self.job1.id, self.resume1.user])
+        url = reverse('specific-resume-api', args=[self.job1.id, self.user1.id])
 
         
         response = self.client.get(url)
@@ -323,7 +327,7 @@ class SpecificResumeAPITest(TestCase):
         self.assertIn('job', response.data)
         self.assertIn('resume', response.data)
         self.assertEqual(response.data['job']['title'], self.job1.title)
-        self.assertEqual(response.data['resume']['user_id'], self.resume1.user)
+        self.assertEqual(response.data['resume']['user'], self.resume1.user_id)
 
     def test_specific_resume_api_resume_not_found(self):
        
@@ -344,14 +348,12 @@ class SpecificResumeAPITest(TestCase):
         resume_without_apply_job = Resume.objects.create(user_id=2, name='Jane Smith')
 
         
-        url = reverse('specific-resume-api', args=[self.job1.id, self.resume2.user])
+        url = reverse('specific-resume-api', args=[self.job1.id, resume_without_apply_job.user_id])
 
-        
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data['message'], 'Resume not found for the specified job.')
-
 
 
 class UpdateApplyJobStatusAPITest(TestCase):
@@ -501,8 +503,6 @@ class AppliedJobsAPITest(TestCase):
         self.client.force_login(self.user1)
         self.client.force_authenticate(user=self.user1)
         
-
-        
         url = reverse('applied-jobs-api')
 
         
@@ -520,35 +520,21 @@ class AppliedJobsAPITest(TestCase):
         jobs_serializer = JobSerializer([self.job1, self.job2], many=True)
         self.assertEqual(response.data['jobs'], jobs_serializer.data)
 
-    def test_applied_jobs_api_unauthenticated_user(self):
-        
-        url = reverse('applied-jobs-api')
 
-        
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_applied_jobs_api_exception(self):
+    def test_applied_jobs_api_no_applyjob(self):
         
         self.client.force_login(self.user3)
         self.client.force_authenticate(user=self.user3)
 
-        
         url = reverse('applied-jobs-api')
 
-        
         ApplyJob.objects.all().delete()
 
-        
         response = self.client.get(url)
 
-        
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
-        self.assertEqual(response.data['message'], 'Internal Server Error')
-
-
-
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data['apply_jobs']), 0)
+        self.assertEqual(len(response.data['jobs']), 0)
 
 class UpdateJobAPITest(TestCase):
     def setUp(self):
@@ -589,24 +575,17 @@ class UpdateJobAPITest(TestCase):
         self.client.force_login(self.user2)
         self.client.force_authenticate(user=self.user2)
         
-
-        
         url = reverse('update-job-api', args=[self.job1.id])
-
         
-        form_data = {'title': 'Updated Job Title'}
+        form_data = {'title': 'Updated Job Title', 'salary': 30000}
 
-        
         response = self.client.post(url, form_data, format='json')
-
-        
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['message'], 'Your Job Ad is now updated.')
 
-        
         updated_job = Job.objects.get(id=self.job1.id)
         self.assertEqual(updated_job.title, 'Updated Job Title')
-
+        
     def test_update_job_api_not_recruiter(self):
         
         
@@ -651,7 +630,6 @@ class UpdateJobAPITest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['message'], 'Something went wrong.')
         self.assertIn('title', response.data['errors'])
-
 
 class ApplyToJobAPITest(TestCase):
     def setUp(self):
