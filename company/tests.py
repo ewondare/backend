@@ -1,5 +1,3 @@
-
-
 import json
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -13,20 +11,22 @@ from rest_framework import status
 from job.models import Job , Industry , ApplyJob
 from company.models import Company
 
+
 from users.models import User
 from resume.models import Resume
-
+from rest_framework.authtoken.models import Token
 
 class UpdateCompanyAPITest(TestCase):
     def setUp(self):
-        self.client = Client()
+        self.client = APIClient()
         self.url = reverse('update-company-api')
 
         self.user1 = User.objects.create(username = 'gmail1@main.com' , email='gmail1@main.com',is_applicant=True , is_recruiter=False , has_company=False , has_resume=True)
         self.user2 = User.objects.create(username = 'gmail2@main.com' , email='gmail2@main.com',is_applicant=False , is_recruiter=True , has_company=True , has_resume=False)
         self.user3 = User.objects.create(username = 'gmail3@main.com' , email='gmail3@main.com',is_applicant=True , is_recruiter=False , has_company=False , has_resume=True)
         self.user4 = User.objects.create(username = 'gmail4@main.com' , email='gmail4@main.com',is_applicant=False , is_recruiter=True , has_company=True , has_resume=False)
-        
+
+
         self.industry1 = Industry.objects.create(name = 'industry1')
         self.industry2 = Industry.objects.create(name = 'industry2')
 
@@ -74,6 +74,7 @@ class UpdateCompanyAPITest(TestCase):
             education='Cs student',
         )
         self.valid_payload = {
+            'name': 'company A',
             'location' : 'Mashhad',
             'size' : '10-50',
         }
@@ -84,34 +85,39 @@ class UpdateCompanyAPITest(TestCase):
     
     def test_update_company_api_with_valid_data(self):
         self.client.force_login(self.user2)
+        self.client.force_authenticate(user=self.user2)
         response = self.client.post(self.url, data=self.valid_payload)
         self.assertEqual(response.status_code, 200)
         self.assertIn('Your company data has been updated!', response.data['message'])
         
-           
+        
     def test_update_company_api_with_invalid_data(self):
         self.client.force_login(self.user2)
+        self.client.force_authenticate(user=self.user2)
         response = self.client.post(self.url, data=self.invalid_payload)
         self.assertEqual(response.status_code, 400)
         self.assertIn('Something went wrong:', response.data['message'])
         
-      
+    
     def test_update_company_api_without_recruiter_permission(self):
-        
         self.client.force_login(self.user3)
+        self.client.force_authenticate(user=self.user3)
         response = self.client.post(self.url, data=self.valid_payload)
         self.assertEqual(response.status_code, 403)
         self.assertIn('Permission Denied.', response.data['message'])
         
-    '''
+    
     def test_update_company_api_unauthenticated(self):
+        self.client.force_login(self.user2)
         response = self.client.post(self.url, data=self.valid_payload)
-        self.assertEqual(response.status_code, 403) '''
+        self.assertEqual(response.status_code, 403) 
         
         
-        
+
 class CompanyDetailsAPITest(TestCase):
     def setUp(self):
+        self.client = APIClient()
+
         self.user1 = User.objects.create(username = 'gmail1@main.com' , email='gmail1@main.com',is_applicant=True , is_recruiter=False , has_company=False , has_resume=True)
         self.user2 = User.objects.create(username = 'gmail2@main.com' , email='gmail2@main.com',is_applicant=False , is_recruiter=True , has_company=True , has_resume=False)
         
@@ -144,19 +150,24 @@ class CompanyDetailsAPITest(TestCase):
             certifications='Certified in XYZ',
             education='Bachelor of Science',
         )
-        self.url = reverse('company-details-api', args=[self.company1.pk])
+        self.url = reverse('company-details-api')
     
-    def test_company_details_api_with_valid_data(self):
+    def test_company_details_api_with_valid_user(self):
+        self.client.force_login(self.user2)
+        self.client.force_authenticate(user=self.user2)
         response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['company']['name'], self.company1.name)
 
         self.assertEqual(len(response.data['jobs']), 2)
         
-        
-    def test_company_details_api_with_invalid_company_id(self):
-        invalid_url = reverse('company-details-api', args=[9999])
-        response = self.client.get(invalid_url)
+
+    def test_company_details_api_with_invalid_user(self):
+        self.client.force_login(self.user1)
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, 404)
         self.assertIn('Company not found.', response.data['message'])
         

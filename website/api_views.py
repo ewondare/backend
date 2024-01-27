@@ -95,11 +95,10 @@ def search_job_api(request):
             "error": "<error_message>"
         }
     """
-
     try:
-        title = request.data.get('title')
-        location = request.data.get('location')
-
+        title = request.query_params.get('title')
+        location = request.query_params.get('location')
+        
         jobs = Job.objects.filter(is_available=True)
 
         if title:

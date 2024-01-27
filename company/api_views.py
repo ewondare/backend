@@ -28,30 +28,35 @@ def update_company_api(request):
     Raises:
         N/A
     """
-
-    if request.user.is_recruiter:
-        company = Company.objects.get(user=request.user)
-        form = UpdateCompanyForm(request.data, instance=company)
-        if form.is_valid():
-            var = form.save(commit=False)
-            user = User.objects.get(id=request.user.id)
-            user.has_company = True
-            var.save()
-            user.save()
+    try:
+        if request.user.is_recruiter:
+            company = Company.objects.get(user=request.user)
+            form = UpdateCompanyForm(request.data, instance=company)
             
-            token = get_token(request)
-            response_data = {
-                'message': 'Your company data has been updated!',
-                'token': token
-            }
-            return Response(response_data, status=200)
+            if form.is_valid():
+                var = form.save(commit=False)
+                user = User.objects.get(id=request.user.id)
+                user.has_company = True
+                var.save()
+                user.save()
+                
+                token = get_token(request)
+                response_data = {
+                    'message': 'Your company data has been updated!',
+                    'token': token
+                }
+                return Response(response_data, status=200)
+            else:
+                error_message = form.errors.as_text()
+                response_data = {'message': f'Something went wrong: {error_message}'}
+                return Response(response_data, status=400)
         else:
-            error_message = form.errors.as_text()
-            response_data = {'message': f'Something went wrong: {error_message}'}
-            return Response(response_data, status=400)
-    else:
+            response_data = {'message': 'Permission Denied.'}
+            return Response(response_data, status=403)
+    except:
         response_data = {'message': 'Permission Denied.'}
         return Response(response_data, status=403)
+        
 
 @api_view(['GET'])
 def company_details_api(request):
