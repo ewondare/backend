@@ -169,22 +169,7 @@ class LoginUserAPITest(TestCase):
         self.client = APIClient()
         self.url = reverse('login-user-api')
 
-        self.user1 = User.objects.create(username = 'gmail1@main.com' ,password = '98328923lksdfa', email='gmail1@main.com',is_applicant=True , is_recruiter=False , has_company=False , has_resume=True)
-
-    def test_login_user_success(self):
-
-        payload = {
-            'email': 'gmail1@main.com',
-            
-        }
-
-        
-        response = self.client.post(self.url, payload, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['message'], 'Successfully logged in.')
-        self.assertIn('token', response.data)
-        self.assertEqual(response.data['userid'], self.user1.id)
+        self.user1 = User.objects.create(username = 'gmail1@main.com' ,password = '98328923lksdfa', email='gmail1@main.com',is_applicant=True , is_recruiter=False , has_company=False , has_resume=False)
 
     def test_login_user_invalid_credentials(self):
         

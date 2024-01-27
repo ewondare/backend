@@ -106,22 +106,24 @@ def company_jobs_api(request):
     Raises:
         N/A
     """
-    company = Company.objects.get(user=request.user)
-    if request.user.is_recruiter:
-        try:
-            company_jobs = Job.objects.filter(company_id=company.id)
-            # jobs_serializer = JobSerializer(company_jobs, many=True)
-
-            jobs_data = [{'id': job.id, 'data': JobSerializer(job).data} for job in company_jobs]
+    try:
+        company = Company.objects.get(user=request.user)
+        if request.user.is_recruiter:
+            try:
+                company_jobs = Job.objects.filter(company_id=company.id)
+                jobs_serializer = JobSerializer(company_jobs, many=True)
+            
+                return Response(jobs_serializer.data, status=status.HTTP_200_OK)
+            
+            except Exception as e:
+                response_data = {'message': str(e)}
+                return Response(response_data, status=500)
         
-            return Response(jobs_data, status=status.HTTP_200_OK)
-        
-        except Exception as e:
-            response_data = {'message': str(e)}
-            return Response(response_data, status=500)
-    
-    response_data = {'message': 'Permission denied.'}
-    return Response(response_data, status=403)
+        response_data = {'message': 'Permission denied.'}
+        return Response(response_data, status=403)
+    except Exception as e:
+        response_data = {'message': str(e)}
+        return Response(response_data, status=404)
     
 @api_view(['GET'])
 def job_resumes_api(request, pk):
@@ -164,7 +166,13 @@ def job_resumes_api(request, pk):
         job = Job.objects.get(pk=pk)
 
         job_serializer = JobSerializer(job)
-        resumes = Resume.objects.filter(job=job)
+
+        apply_jobs = ApplyJob.objects.filter(job=job)
+
+        user_ids = [apply_job.user_id for apply_job in apply_jobs]
+
+        resumes = Resume.objects.filter(user__id__in=user_ids)
+
         resumes_serializer = ResumeSerializer(resumes, many=True)
 
         response_data = {
