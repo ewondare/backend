@@ -1,6 +1,6 @@
-# Django REST API
+# Software Design IUST Backend
 
-This repository contains a Django REST API project that provides various endpoints for different functionalities. It includes multiple apps that handle different aspects of the API.
+This repository contains the backend part of the Software Design project at the Iran University of Science and Technology (IUST). It serves as the backend server for the software application. It contains a Django REST API project that provides various endpoints for different functionalities. It includes multiple apps that handle different aspects of the API.
 
 ## Installation
 
@@ -15,7 +15,7 @@ To use this API, you need to follow these steps:
 2. Navigate to the project directory:
 
    ```
-   cd django-rest-api
+   cd backend
    ```
 
 3. Install the required dependencies by running the following command:
